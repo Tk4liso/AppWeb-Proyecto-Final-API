@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',       # conserva soporte de tokens de DRF
     'corsheaders',                    # librería CORS actualizada
     'control_escolar_desit_api',
+    "*", ".onrender.com",             #ToDo: MATERIAS - brr
 ]
 
 MIDDLEWARE = [
@@ -108,3 +109,6 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
 }
+
+#ToDo: MATERIAS - brrr
+STATIC_ROOT = BASE_DIR / "staticfiles"

@@ -8,6 +8,8 @@ from control_escolar_desit_api.views import alumnos
 from control_escolar_desit_api.views import maestros
 from control_escolar_desit_api.views import auth
 from control_escolar_desit_api.views import bootstrap
+#ToDo: MATERIAS
+from control_escolar_desit_api.views import materias
 
 urlpatterns = [
     #Create Admin
@@ -15,13 +17,29 @@ urlpatterns = [
     #Admin Data
         path('lista-admins/', users.AdminAll.as_view()),
     #Edit Admin
-        #path('admins-edit/', users.AdminsViewEdit.as_view())
+        #path('admins-edit/', users.AdminsViewEdit.as_view()),
+     
+     #ToDo: AGREGUÉ LISTA DE ALUMNOS
      #Create Alumno
         path('alumnos/', alumnos.AlumnosView.as_view()),
+    #ALUMNO DATA (LISTA)
+        path('lista-alumnos/', alumnos.AlumnosAll.as_view()),
+
     #Create Maestro
         path('maestros/', maestros.MaestrosView.as_view()),
     #Maestro Data
         path('lista-maestros/', maestros.MaestrosAll.as_view()),
+    
+    #ToDo: MATERIAS
+    #Create Materia 
+        path('materias/', materias.MateriasView.as_view()),
+    #Materia Data (LISTA)
+        path('lista-materias/', materias.MateriasAll.as_view()),
+    
+    #ToDo: Graficas    
+    #Total Users
+        path('total-usuarios/', users.TotalUsers.as_view()),
+    
     #Login
         path('login/', auth.CustomAuthToken.as_view()),
     #Logout

@@ -61,3 +61,19 @@ class Maestros(models.Model):
     def __str__(self):
         return "Perfil del maestro "+self.user.first_name+" "+self.user.last_name
 
+#ToDo: MATERIAS - nuevo modelo
+class Materias(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    nrc = models.CharField(max_length=5, unique=True)
+    nombre = models.CharField(max_length=60)
+    seccion = models.CharField(max_length=3)
+    dias = models.CharField(max_length=100) #Los días se guardan en un solo string
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
+    salon = models.CharField(max_length=15)
+    programa = models.CharField(max_length=60)  #Ingeniería, Licenciatura...
+    maestro_asignado = models.ForeignKey(Maestros, on_delete=models.CASCADE)
+    creditos = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.nrc} - {self.nombre}"

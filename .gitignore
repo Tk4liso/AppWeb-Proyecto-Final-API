@@ -57,3 +57,17 @@ sistema_fcc_api/migrations
 # Upload data
 /uploadData
 .DS_Store
+
+
+# Entorno virtual
+venv/
+.venv/
+env/
+
+# Cachés de Python
+__pycache__/
+*.pyc
+
+# Archivos de configuración locales
+*.sqlite3
+.env

@@ -9,6 +9,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.models import Group
 import json
+#ToDo: DelEdit
+from django.shortcuts import get_object_or_404
 
 class MaestrosAll(generics.CreateAPIView):
     #Esta función es esencial para todo donde se requiera autorización de inicio de sesión (token)
@@ -26,6 +28,7 @@ class MaestrosAll(generics.CreateAPIView):
         return Response(lista, 200)
     
 class MaestrosView(generics.CreateAPIView):
+    #ToDo: Graficas - Si no causa conflicto dejar así, si no ver que rollo con el to do de users.py (el de graficas)
     #Registrar nuevo usuario maestro
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -63,3 +66,75 @@ class MaestrosView(generics.CreateAPIView):
             maestro.save()
             return Response({"maestro_created_id": maestro.id }, 201)
         return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Actualizar datos del maestro
+    # TODO: Agregar actualización de maestros
+    #ToDo: EditDel - Obtener maestro por ID como en admin
+    def get(self, request, *args, **kwargs):
+        maestro_id = request.GET.get("id")
+        if not maestro_id:
+            return Response({"details": "Falta el id del maestro"}, status=400)
+
+        maestro = get_object_or_404(Maestros, id=maestro_id)
+        user = maestro.user
+
+        data = {
+            "id": maestro.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "id_trabajador": maestro.id_trabajador,
+            "fecha_nacimiento": maestro.fecha_nacimiento,
+            "telefono": maestro.telefono,
+            "rfc": maestro.rfc,
+            "cubiculo": maestro.cubiculo,
+            "area_investigacion": maestro.area_investigacion,
+            "materias_json": json.loads(maestro.materias_json),
+            "rol": "maestro"
+        }
+        return Response(data, 200)
+    
+    # Actualizar maestro
+    @transaction.atomic
+    def put(self, request, *args, **kwargs):
+        maestro_id = request.data.get("id")
+        if not maestro_id:
+            return Response({"details": "Falta el id del maestro"}, 400)
+
+        maestro = get_object_or_404(Maestros, id=maestro_id)
+        user = maestro.user
+
+        # Actualizar datos del usuario
+        user.first_name = request.data.get("first_name", user.first_name)
+        user.last_name = request.data.get("last_name", user.last_name)
+        user.email = request.data.get("email", user.email)
+        user.username = user.email
+        user.save()
+
+        # Actualizar datos del maestro
+        maestro.id_trabajador = request.data.get("id_trabajador", maestro.id_trabajador)
+        maestro.fecha_nacimiento = request.data.get("fecha_nacimiento", maestro.fecha_nacimiento)
+        maestro.telefono = request.data.get("telefono", maestro.telefono)
+        maestro.rfc = request.data.get("rfc", maestro.rfc).upper()
+        maestro.cubiculo = request.data.get("cubiculo", maestro.cubiculo)
+        maestro.area_investigacion = request.data.get("area_investigacion", maestro.area_investigacion)
+
+        # Si viene un array, se convierte a JSON
+        materias = request.data.get("materias_json")
+        if materias is not None:
+            maestro.materias_json = json.dumps(materias)
+
+        maestro.save()
+
+        return Response({"details": "Maestro actualizado correctamente"}, 200)
+
+
+    # Eliminar maestro con delete (Borrar realmente)
+    @transaction.atomic
+    def delete(self, request, *args, **kwargs):
+        maestro = get_object_or_404(Maestros, id=request.GET.get("id"))
+        try:
+            maestro.user.delete()
+            return Response({"details":"Maestro eliminado"},200)
+        except Exception as e:
+            return Response({"details":"Algo pasó al eliminar"},400)
