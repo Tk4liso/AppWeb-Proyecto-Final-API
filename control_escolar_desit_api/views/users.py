@@ -12,6 +12,10 @@ from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 #ToDo: Graficas
 import json
+#ToDo: MATERIAS
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 class AdminAll(generics.CreateAPIView):
     #Esta función es esencial para todo donde se requiera autorización de inicio de sesión (token)
@@ -23,14 +27,18 @@ class AdminAll(generics.CreateAPIView):
         return Response(lista, 200)
 
 #ToDo: EditDelete - Cambiar toda la clase AdminView
-class AdminView(generics.CreateAPIView):
+#class AdminView(generics.CreateAPIView):
+class AdminView(APIView):
+    #ToDo: Materias
+    permission_classes = [AllowAny]
+    
     #ToDo: Graficas
     # Permisos por método (sobrescribe el comportamiento default)
     # Verifica que el usuario esté autenticado para las peticiones GET, PUT y DELETE
     def get_permissions(self):
         if self.request.method in ['GET', 'PUT', 'DELETE']:
             return [permissions.IsAuthenticated()]
-        return []  # POST no requiere autenticación
+        return [AllowAny()] #Para Vercel
     
     #Obtener usuario por ID
     #ToDo: Graficas (el comentario de abajo)
