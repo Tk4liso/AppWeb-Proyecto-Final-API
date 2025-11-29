@@ -7,7 +7,9 @@ SECRET_KEY = '-_&+lsebec(whhw!%n@ww&1j=4-^j_if9x8$q778+99oz&!ms2'
 
 DEBUG = True  # en desarrollo
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+#ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*", ".onrender.com"] #ToDo: MATERIAS
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -20,7 +22,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',       # conserva soporte de tokens de DRF
     'corsheaders',                    # librería CORS actualizada
     'control_escolar_desit_api',
-    "*", ".onrender.com",             #ToDo: MATERIAS - brr
 ]
 
 MIDDLEWARE = [
@@ -72,13 +73,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'control_escolar_desit_api.wsgi.application'
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'OPTIONS': {
+#            'read_default_file': os.path.join(BASE_DIR, "my.cnf"),
+#            'charset': 'utf8mb4',
+#        }
+#    }
+#}
+
+#ToDo: MATERIAS
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': os.path.join(BASE_DIR, "my.cnf"),
-            'charset': 'utf8mb4',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -111,4 +121,4 @@ REST_FRAMEWORK = {
 }
 
 #ToDo: MATERIAS - brrr
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
