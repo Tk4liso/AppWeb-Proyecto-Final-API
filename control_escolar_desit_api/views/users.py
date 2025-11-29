@@ -52,49 +52,54 @@ class AdminView(APIView):
     #Registrar nuevo usuario
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        # Serializamos los datos del administrador para volverlo de nuevo JSON
-        user = UserSerializer(data=request.data)
+        try:
+            # Serializamos los datos del administrador para volverlo de nuevo JSON
+            user = UserSerializer(data=request.data)
         
-        if user.is_valid():
-            #Grabar datos del administrador
-            role = request.data['rol']
-            first_name = request.data['first_name']
-            last_name = request.data['last_name']
-            email = request.data['email']
-            password = request.data['password']
-            #Valida si existe el usuario o bien el email registrado
-            existing_user = User.objects.filter(email=email).first()
+            if user.is_valid():
+                #Grabar datos del administrador
+                role = request.data['rol']
+                first_name = request.data['first_name']
+                last_name = request.data['last_name']
+                email = request.data['email']
+                password = request.data['password']
+                #Valida si existe el usuario o bien el email registrado
+                existing_user = User.objects.filter(email=email).first()
 
-            if existing_user:
-                return Response({"message":"Username "+email+", is already taken"},400)
+                if existing_user:
+                    return Response({"message":"Username "+email+", is already taken"},400)
 
-            user = User.objects.create( username = email,
-                                        email = email,
-                                        first_name = first_name,
-                                        last_name = last_name,
-                                        is_active = 1)
+                user = User.objects.create( username = email,
+                                            email = email,
+                                            first_name = first_name,
+                                            last_name = last_name,
+                                            is_active = 1)
 
+                user.save()
+                user.set_password(password)
+                user.save()
 
-            user.save()
-            user.set_password(password)
-            user.save()
+                group, created = Group.objects.get_or_create(name=role)
+                group.user_set.add(user)
+                group.save()
 
-            group, created = Group.objects.get_or_create(name=role)
-            group.user_set.add(user)
-            group.save()
+                #Almacenar los datos adicionales del administrador
+                admin = Administradores.objects.create(user=user,
+                                                clave_admin= request.data["clave_admin"],
+                                                telefono= request.data["telefono"],
+                                                rfc= request.data["rfc"].upper(),
+                                                edad= request.data["edad"],
+                                                ocupacion= request.data["ocupacion"])
+                admin.save()
 
-            #Almacenar los datos adicionales del administrador
-            admin = Administradores.objects.create(user=user,
-                                            clave_admin= request.data["clave_admin"],
-                                            telefono= request.data["telefono"],
-                                            rfc= request.data["rfc"].upper(),
-                                            edad= request.data["edad"],
-                                            ocupacion= request.data["ocupacion"])
-            admin.save()
+                return Response({"Admin creado con el ID: ": admin.id }, 201)
+            return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"Admin creado con el ID: ": admin.id }, 201)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({"error": str(e)}, status=500)
 
-        return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
     
     # Actualizar datos del administrador
     @transaction.atomic
