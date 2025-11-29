@@ -8,7 +8,11 @@ SECRET_KEY = '-_&+lsebec(whhw!%n@ww&1j=4-^j_if9x8$q778+99oz&!ms2'
 DEBUG = True  # en desarrollo
 
 #ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-ALLOWED_HOSTS = ["*", ".onrender.com"] #ToDo: MATERIAS
+ALLOWED_HOSTS = [
+    "*",
+    ".onrender.com",
+    "app-web-proyecto-final.vercel.app",
+] #ToDo: MATERIAS
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,12 +40,18 @@ MIDDLEWARE = [
 ]
 
 # Configuración de CORS: define orígenes permitidos y quita CORS_ORIGIN_ALLOW_ALL
+#ToDo: MATERIAS
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:4200',
+    "https://app-web-proyecto-final.vercel.app",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'control_escolar_desit_api.urls'
+
+#ToDo: MATERIAS - ????
+CORS_ALLOW_HEADERS = ["*"]
+CORS_ALLOW_METHODS = ["*"]
+CORS_ALLOW_CREDENTIALS = True
 
 
 
